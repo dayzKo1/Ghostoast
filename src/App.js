@@ -35,39 +35,19 @@ function App() {
     initBgmPlayer();
   }, []);
 
-  // 控制BGM播放
-  useEffect(() => {
-    if (gameStatus === 'in-progress' && musicConfig.autoPlay && bgmPlayerRef.current) {
-      // 开始答题时随机播放BGM
-      bgmPlayerRef.current.playRandomBgm();
-    } else if (bgmPlayerRef.current) {
-      // 停止播放
-      bgmPlayerRef.current.stop();
-    }
-  }, [gameStatus]);
+  // 移动到下一题
+  const moveToNextQuestion = useCallback(() => {
+    setCurrentQuestionIndex(currentQuestionIndex + 1);
+    setSelectedOption(null);
+    // 设置下一题的倒计时
+    const nextQuestion = questions[currentQuestionIndex + 1];
+    setQuestionTimeLeft(nextQuestion.timeLimit || 30);
+  }, [currentQuestionIndex, questions]);
 
-  // 总倒计时效果
-  useEffect(() => {
-    let timer;
-    if (gameStatus === 'in-progress' && timeLeft > 0) {
-      timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    } else if (gameStatus === 'in-progress' && timeLeft === 0) {
-      finishQuiz();
-    }
-    return () => clearTimeout(timer);
-  }, [timeLeft, gameStatus]);
-
-  // 每题倒计时效果
-  useEffect(() => {
-    let questionTimer;
-    if (gameStatus === 'in-progress' && questionTimeLeft > 0) {
-      questionTimer = setTimeout(() => setQuestionTimeLeft(questionTimeLeft - 1), 1000);
-    } else if (gameStatus === 'in-progress' && questionTimeLeft === 0 && questions.length > 0) {
-      // 时间到了自动跳转到下一题
-      handleTimeUp();
-    }
-    return () => clearTimeout(questionTimer);
-  }, [questionTimeLeft, gameStatus, questions, currentQuestionIndex, handleTimeUp]);
+  // 结束答题
+  const finishQuiz = useCallback(() => {
+    setGameStatus('finished');
+  }, []);
 
   // 处理题目时间到的情况
   const handleTimeUp = useCallback(() => {
@@ -90,16 +70,41 @@ function App() {
     } else {
       finishQuiz();
     }
-  }, [questions, currentQuestionIndex, userAnswers]);
+  }, [questions, currentQuestionIndex, userAnswers, moveToNextQuestion, finishQuiz]);
 
-  // 移动到下一题
-  const moveToNextQuestion = useCallback(() => {
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
-    setSelectedOption(null);
-    // 设置下一题的倒计时
-    const nextQuestion = questions[currentQuestionIndex + 1];
-    setQuestionTimeLeft(nextQuestion.timeLimit || 30);
-  }, [currentQuestionIndex, questions]);
+  // 总倒计时效果
+  useEffect(() => {
+    let timer;
+    if (gameStatus === 'in-progress' && timeLeft > 0) {
+      timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+    } else if (gameStatus === 'in-progress' && timeLeft === 0) {
+      finishQuiz();
+    }
+    return () => clearTimeout(timer);
+  }, [timeLeft, gameStatus, finishQuiz]);
+
+  // 每题倒计时效果
+  useEffect(() => {
+    let questionTimer;
+    if (gameStatus === 'in-progress' && questionTimeLeft > 0) {
+      questionTimer = setTimeout(() => setQuestionTimeLeft(questionTimeLeft - 1), 1000);
+    } else if (gameStatus === 'in-progress' && questionTimeLeft === 0 && questions.length > 0) {
+      // 时间到了自动跳转到下一题
+      handleTimeUp();
+    }
+    return () => clearTimeout(questionTimer);
+  }, [questionTimeLeft, gameStatus, questions, currentQuestionIndex, handleTimeUp]);
+
+  // 控制BGM播放
+  useEffect(() => {
+    if (gameStatus === 'in-progress' && musicConfig.autoPlay && bgmPlayerRef.current) {
+      // 开始答题时随机播放BGM
+      bgmPlayerRef.current.playRandomBgm();
+    } else if (bgmPlayerRef.current) {
+      // 停止播放
+      bgmPlayerRef.current.stop();
+    }
+  }, [gameStatus]);
 
   // 开始答题
   const startQuiz = useCallback(() => {
@@ -152,12 +157,7 @@ function App() {
     } else {
       finishQuiz();
     }
-  }, [currentQuestionIndex, questions, score, selectedOption, userAnswers, moveToNextQuestion]);
-
-  // 结束答题
-  const finishQuiz = useCallback(() => {
-    setGameStatus('finished');
-  }, []);
+  }, [currentQuestionIndex, questions, score, selectedOption, userAnswers, moveToNextQuestion, finishQuiz]);
 
   // 切换静音状态
   const toggleMute = () => {
