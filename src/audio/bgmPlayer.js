@@ -82,6 +82,12 @@ class BgmPlayer {
       source.src = bgmPath;
       source.type = 'audio/flac';
       this.audio.appendChild(source);
+    } else if (fileExt === '.mp3') {
+      // 如果是MP3文件
+      const source = document.createElement('source');
+      source.src = bgmPath;
+      source.type = 'audio/mpeg';
+      this.audio.appendChild(source);
     } else {
       // 其他格式直接设置src
       this.audio.src = bgmPath;
@@ -159,12 +165,16 @@ class BgmPlayer {
    */
   playOnUserInteraction() {
     if (this.audio) {
+      // 如果已经有音频对象，先尝试播放
       const playPromise = this.audio.play();
       if (playPromise !== undefined) {
         playPromise.catch(e => {
           console.log("用户交互后播放仍被阻止:", e);
         });
       }
+    } else if (this.bgmFiles.length > 0) {
+      // 如果还没有音频对象，创建并播放第一个文件
+      this.playRandomBgm();
     }
   }
 }

@@ -28,12 +28,50 @@ function App() {
 
   // 初始化BGM播放器
   useEffect(() => {
+    let hasInteracted = false;
+    
     const initBgmPlayer = async () => {
-      bgmPlayerRef.current = new BgmPlayer(musicConfig);
-      await bgmPlayerRef.current.init();
+      try {
+        bgmPlayerRef.current = new BgmPlayer(musicConfig);
+        await bgmPlayerRef.current.init();
+        
+        // 如果之前已经有用户交互，尝试播放
+        if (hasInteracted) {
+          bgmPlayerRef.current.playOnUserInteraction();
+        }
+      } catch (error) {
+        console.warn('BGM player initialization failed:', error);
+      }
     };
 
+    // 添加全局的一次性用户交互监听
+    const handleUserInteraction = () => {
+      hasInteracted = true;
+      // 移除监听器，避免重复触发
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+      document.removeEventListener('keydown', handleUserInteraction);
+      
+      // 如果BGM播放器已初始化，尝试播放
+      if (bgmPlayerRef.current) {
+        bgmPlayerRef.current.playOnUserInteraction();
+      }
+    };
+
+    // 监听用户交互事件
+    document.addEventListener('click', handleUserInteraction);
+    document.addEventListener('touchstart', handleUserInteraction);
+    document.addEventListener('keydown', handleUserInteraction);
+
+    // 初始化播放器
     initBgmPlayer();
+
+    // 清理事件监听器
+    return () => {
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+      document.removeEventListener('keydown', handleUserInteraction);
+    };
   }, []);
 
   // 移动到下一题
@@ -99,18 +137,15 @@ function App() {
 
   // 控制BGM播放
   useEffect(() => {
-    // 延迟一小段时间确保BGM播放器初始化完成
-    const timer = setTimeout(() => {
-      if (gameStatus === 'in-progress' && musicConfig.autoPlay && bgmPlayerRef.current) {
-        // 开始答题时随机播放BGM
-        bgmPlayerRef.current.playRandomBgm();
-      } else if (gameStatus === 'finished' && bgmPlayerRef.current) {
-        // 停止播放
-        bgmPlayerRef.current.stop();
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
+    if (gameStatus === 'in-progress' && musicConfig.autoPlay && bgmPlayerRef.current) {
+      // 开始答题时随机播放BGM
+      bgmPlayerRef.current.playRandomBgm().catch(error => {
+        console.warn('Failed to play random BGM:', error);
+      });
+    } else if (gameStatus === 'finished' && bgmPlayerRef.current) {
+      // 结束时停止播放
+      bgmPlayerRef.current.stop();
+    }
   }, [gameStatus]);
 
   // 开始答题
@@ -131,11 +166,12 @@ function App() {
     // 设置第一题的倒计时
     setQuestionTimeLeft(selectedQuestions[0]?.timeLimit || 30);
     
-    // 在用户交互后尝试播放音乐
+    // 尝试播放音乐
     if (bgmPlayerRef.current) {
-      setTimeout(() => {
-        bgmPlayerRef.current.playOnUserInteraction();
-      }, 200);
+      bgmPlayerRef.current.playRandomBgm().catch(error => {
+        console.warn('Failed to play BGM on start:', error);
+        // 如果播放失败，可能是由于浏览器策略，等待用户后续交互
+      });
     }
   }, [rawMarkdown]);
 
@@ -175,13 +211,15 @@ function App() {
   }, [currentQuestionIndex, questions, score, selectedOption, userAnswers, moveToNextQuestion, finishQuiz, showAnswer]);
 
   // 切换静音状态
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     const newMutedState = !isMuted;
     setIsMuted(newMutedState);
     if (bgmPlayerRef.current) {
-      bgmPlayerRef.current.setMuted(newMutedState);
+      bgmPlayerRef.current.setMuted(newMutedState).catch(error => {
+        console.warn('Failed to set mute state:', error);
+      });
     }
-  };
+  }, [isMuted]);
 
   // 切换答案显示状态
   const toggleShowAnswer = () => {
