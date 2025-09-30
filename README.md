@@ -1,70 +1,68 @@
-# Getting Started with Create React App
+# 答题系统
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+这是一个基于React构建的答题系统，具有以下功能：
 
-## Available Scripts
+1. 支持JSON配置题库
+2. 倒计时答题系统
+3. 随机抽取题库系统
+4. GitHub Pages部署
 
-In the project directory, you can run:
+## 功能特点
 
-### `npm start`
+- **JSON题库配置**：题目存储在 [src/questions.json](src/questions.json) 文件中，可以轻松添加或修改题目
+- **倒计时功能**：默认设置为5分钟答题时间，在界面上方实时显示剩余时间
+- **随机抽题**：每次开始答题时会从题库中随机选取题目
+- **答题回顾**：答题结束后可查看每道题的正确与否及自己的选择
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 安装与运行
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. 克隆或下载此项目
+2. 在项目根目录下运行 `npm install` 安装依赖
+3. 运行 `npm start` 启动开发服务器
 
-### `npm test`
+## 部署到GitHub Pages
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. 修改 [package.json](package.json) 中的 `homepage` 字段为你自己的GitHub Pages地址：
+   ```
+   "homepage": "https://[你的用户名].github.io/quiz-system"
+   ```
 
-### `npm run build`
+2. 运行 `npm run deploy` 命令进行部署
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 自定义题库
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+编辑 [src/questions.json](src/questions.json) 文件来自定义题库。每个题目包含以下字段：
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- `id`: 题目唯一标识符
+- `text`: 题目内容
+- `options`: 选项数组
+- `correctAnswer`: 正确答案索引（从0开始）
 
-### `npm run eject`
+示例：
+```json
+{
+  "id": 1,
+  "text": "世界上最大的洲是哪个？",
+  "options": [
+    "A. 非洲",
+    "B. 亚洲",
+    "C. 欧洲",
+    "D. 北美洲"
+  ],
+  "correctAnswer": 1
+}
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 技术栈
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- React
+- JavaScript (ES6+)
+- CSS3
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 可扩展功能
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+你可以根据需求继续扩展此系统，例如：
+- 添加题目分类
+- 实现不同难度等级
+- 记录用户历史成绩
+- 添加更多题型（多选题、判断题等）

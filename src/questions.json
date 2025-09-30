@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "text": "世界上最大的洲是哪个？",
+    "options": [
+      "A. 非洲",
+      "B. 亚洲",
+      "C. 欧洲",
+      "D. 北美洲"
+    ],
+    "correctAnswer": 1
+  },
+  {
+    "id": 2,
+    "text": "React是由哪家公司开发的？",
+    "options": [
+      "A. Google",
+      "B. Facebook",
+      "C. Microsoft",
+      "D. Amazon"
+    ],
+    "correctAnswer": 1
+  },
+  {
+    "id": 3,
+    "text": "JavaScript是一门编译型语言还是解释型语言？",
+    "options": [
+      "A. 编译型",
+      "B. 解释型",
+      "C. 混合型",
+      "D. 以上都不是"
+    ],
+    "correctAnswer": 1
+  },
+  {
+    "id": 4,
+    "text": "CSS的全称是什么？",
+    "options": [
+      "A. Computer Style Sheets",
+      "B. Creative Style Sheets",
+      "C. Cascading Style Sheets",
+      "D. Colorful Style Sheets"
+    ],
+    "correctAnswer": 2
+  },
+  {
+    "id": 5,
+    "text": "HTML的全称是什么？",
+    "options": [
+      "A. Hyper Text Markup Language",
+      "B. Home Tool Markup Language",
+      "C. Hyperlinks and Text Markup Language",
+      "D. Hyper Text Makeup Language"
+    ],
+    "correctAnswer": 0
+  }
+]
