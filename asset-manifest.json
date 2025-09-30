@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/Ghostoast/static/css/main.a78afd1e.css",
-    "main.js": "/Ghostoast/static/js/main.94429a54.js",
+    "main.js": "/Ghostoast/static/js/main.80b588fb.js",
     "static/js/453.51fc4bae.chunk.js": "/Ghostoast/static/js/453.51fc4bae.chunk.js",
     "static/media/questions.md": "/Ghostoast/static/media/questions.fbf2ac5e86f75f5ebb67.md",
     "index.html": "/Ghostoast/index.html",
     "main.a78afd1e.css.map": "/Ghostoast/static/css/main.a78afd1e.css.map",
-    "main.94429a54.js.map": "/Ghostoast/static/js/main.94429a54.js.map",
+    "main.80b588fb.js.map": "/Ghostoast/static/js/main.80b588fb.js.map",
     "453.51fc4bae.chunk.js.map": "/Ghostoast/static/js/453.51fc4bae.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a78afd1e.css",
-    "static/js/main.94429a54.js"
+    "static/js/main.80b588fb.js"
   ]
 }
