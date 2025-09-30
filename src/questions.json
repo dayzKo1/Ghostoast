@@ -8,7 +8,8 @@
       "C. 欧洲",
       "D. 北美洲"
     ],
-    "correctAnswer": 1
+    "correctAnswer": 1,
+    "timeLimit": 30
   },
   {
     "id": 2,
@@ -19,7 +20,8 @@
       "C. Microsoft",
       "D. Amazon"
     ],
-    "correctAnswer": 1
+    "correctAnswer": 1,
+    "timeLimit": 30
   },
   {
     "id": 3,
@@ -30,7 +32,8 @@
       "C. 混合型",
       "D. 以上都不是"
     ],
-    "correctAnswer": 1
+    "correctAnswer": 1,
+    "timeLimit": 30
   },
   {
     "id": 4,
@@ -41,7 +44,8 @@
       "C. Cascading Style Sheets",
       "D. Colorful Style Sheets"
     ],
-    "correctAnswer": 2
+    "correctAnswer": 2,
+    "timeLimit": 30
   },
   {
     "id": 5,
@@ -52,6 +56,7 @@
       "C. Hyperlinks and Text Markup Language",
       "D. Hyper Text Makeup Language"
     ],
-    "correctAnswer": 0
+    "correctAnswer": 0,
+    "timeLimit": 30
   }
 ]

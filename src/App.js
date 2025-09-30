@@ -7,11 +7,12 @@ function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(300); // 5分钟倒计时
+  const [timeLeft, setTimeLeft] = useState(300); // 5分钟总倒计时
+  const [questionTimeLeft, setQuestionTimeLeft] = useState(0); // 每题倒计时
   const [gameStatus, setGameStatus] = useState('not-started'); // not-started, in-progress, finished
   const [userAnswers, setUserAnswers] = useState([]);
 
-  // 倒计时效果
+  // 总倒计时效果
   useEffect(() => {
     let timer;
     if (gameStatus === 'in-progress' && timeLeft > 0) {
@@ -21,6 +22,50 @@ function App() {
     }
     return () => clearTimeout(timer);
   }, [timeLeft, gameStatus]);
+
+  // 每题倒计时效果
+  useEffect(() => {
+    let questionTimer;
+    if (gameStatus === 'in-progress' && questionTimeLeft > 0) {
+      questionTimer = setTimeout(() => setQuestionTimeLeft(questionTimeLeft - 1), 1000);
+    } else if (gameStatus === 'in-progress' && questionTimeLeft === 0 && questions.length > 0) {
+      // 时间到了自动跳转到下一题
+      handleTimeUp();
+    }
+    return () => clearTimeout(questionTimer);
+  }, [questionTimeLeft, gameStatus, questions, currentQuestionIndex]);
+
+  // 处理题目时间到的情况
+  const handleTimeUp = () => {
+    // 记录未答题
+    const currentQuestion = questions[currentQuestionIndex];
+    const newUserAnswers = [
+      ...userAnswers,
+      {
+        questionId: currentQuestion.id,
+        selectedOption: null,
+        isCorrect: false
+      }
+    ];
+    
+    setUserAnswers(newUserAnswers);
+
+    // 移动到下一题或结束
+    if (currentQuestionIndex < questions.length - 1) {
+      moveToNextQuestion();
+    } else {
+      finishQuiz();
+    }
+  };
+
+  // 移动到下一题
+  const moveToNextQuestion = () => {
+    setCurrentQuestionIndex(currentQuestionIndex + 1);
+    setSelectedOption(null);
+    // 设置下一题的倒计时
+    const nextQuestion = questions[currentQuestionIndex + 1];
+    setQuestionTimeLeft(nextQuestion.timeLimit || 30);
+  };
 
   // 随机选择题目
   const selectRandomQuestions = (allQuestions, count) => {
@@ -33,11 +78,13 @@ function App() {
     const selectedQuestions = selectRandomQuestions(questionsData, Math.min(5, questionsData.length));
     setQuestions(selectedQuestions);
     setGameStatus('in-progress');
-    setTimeLeft(300); // 5分钟
+    setTimeLeft(300); // 5分钟总时间
     setCurrentQuestionIndex(0);
     setScore(0);
     setUserAnswers([]);
     setSelectedOption(null);
+    // 设置第一题的倒计时
+    setQuestionTimeLeft(selectedQuestions[0].timeLimit || 30);
   };
 
   // 选择答案
@@ -69,8 +116,7 @@ function App() {
 
     // 移动到下一题或结束
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedOption(null);
+      moveToNextQuestion();
     } else {
       finishQuiz();
     }
@@ -96,7 +142,7 @@ function App() {
           <div className="start-screen">
             <h2>欢迎来到答题系统</h2>
             <p>题目数量: {Math.min(5, questionsData.length)} 题</p>
-            <p>答题时间: 5 分钟</p>
+            <p>总时间: 5 分钟</p>
             <button onClick={startQuiz} className="start-button">
               开始答题
             </button>
@@ -107,7 +153,10 @@ function App() {
           <div className="quiz-screen">
             <div className="quiz-header">
               <div className="timer">
-                剩余时间: {formatTime(timeLeft)}
+                总剩余时间: {formatTime(timeLeft)}
+              </div>
+              <div className="question-timer">
+                本题剩余: {formatTime(questionTimeLeft)}
               </div>
               <div className="progress">
                 进度: {currentQuestionIndex + 1}/{questions.length}
@@ -122,6 +171,7 @@ function App() {
                     key={index}
                     className={`option-button ${selectedOption === index ? 'selected' : ''}`}
                     onClick={() => handleOptionSelect(index)}
+                    disabled={questionTimeLeft === 0}
                   >
                     {option}
                   </button>
@@ -129,7 +179,7 @@ function App() {
               </div>
               <button 
                 onClick={submitAnswer} 
-                disabled={selectedOption === null}
+                disabled={selectedOption === null || questionTimeLeft === 0}
                 className="submit-button"
               >
                 {currentQuestionIndex < questions.length - 1 ? '下一题' : '提交答案'}
@@ -149,9 +199,9 @@ function App() {
                 return (
                   <div key={question.id} className="review-item">
                     <p><strong>问题 {index + 1}: {question.text}</strong></p>
-                    <p>你的答案: {question.options[userAnswer?.selectedOption]}</p>
+                    <p>你的答案: {userAnswer?.selectedOption !== null ? question.options[userAnswer?.selectedOption] : '未作答'}</p>
                     <p className={userAnswer?.isCorrect ? 'correct' : 'incorrect'}>
-                      {userAnswer?.isCorrect ? '✓ 正确' : '✗ 错误'}
+                      {userAnswer?.isCorrect ? '✓ 正确' : userAnswer?.selectedOption === null ? '✗ 未作答' : '✗ 错误'}
                     </p>
                   </div>
                 );
