@@ -97,13 +97,18 @@ function App() {
 
   // 控制BGM播放
   useEffect(() => {
-    if (gameStatus === 'in-progress' && musicConfig.autoPlay && bgmPlayerRef.current) {
-      // 开始答题时随机播放BGM
-      bgmPlayerRef.current.playRandomBgm();
-    } else if (bgmPlayerRef.current) {
-      // 停止播放
-      bgmPlayerRef.current.stop();
-    }
+    // 延迟一小段时间确保BGM播放器初始化完成
+    const timer = setTimeout(() => {
+      if (gameStatus === 'in-progress' && musicConfig.autoPlay && bgmPlayerRef.current) {
+        // 开始答题时随机播放BGM
+        bgmPlayerRef.current.playRandomBgm();
+      } else if (bgmPlayerRef.current) {
+        // 停止播放
+        bgmPlayerRef.current.stop();
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [gameStatus]);
 
   // 开始答题

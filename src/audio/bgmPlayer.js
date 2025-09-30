@@ -48,7 +48,9 @@ class BgmPlayer {
 
     // 创建新的音频对象
     this.currentBgmIndex = index;
-    const bgmPath = `${this.config.bgmFolder}${this.bgmFiles[index]}`;
+    // 确保文件夹路径以/结尾
+    const folder = this.config.bgmFolder.endsWith('/') ? this.config.bgmFolder : this.config.bgmFolder + '/';
+    const bgmPath = `${folder}${this.bgmFiles[index]}`;
     
     this.audio = new Audio(bgmPath);
     this.audio.volume = this.config.defaultVolume;
