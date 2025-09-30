@@ -16,6 +16,7 @@ function App() {
   const [userAnswers, setUserAnswers] = useState([]);
   const [rawMarkdown, setRawMarkdown] = useState('');
   const [isMuted, setIsMuted] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false); // 控制是否显示答案
   const bgmPlayerRef = useRef(null);
 
   // 获取Markdown内容
@@ -39,6 +40,7 @@ function App() {
   const moveToNextQuestion = useCallback(() => {
     setCurrentQuestionIndex(currentQuestionIndex + 1);
     setSelectedOption(null);
+    setShowAnswer(false); // 切换题目时隐藏答案
     // 设置下一题的倒计时
     const nextQuestion = questions[currentQuestionIndex + 1];
     setQuestionTimeLeft(nextQuestion?.timeLimit || 30);
@@ -125,6 +127,7 @@ function App() {
     setScore(0);
     setUserAnswers([]);
     setSelectedOption(null);
+    setShowAnswer(false); // 开始答题时隐藏答案
     // 设置第一题的倒计时
     setQuestionTimeLeft(selectedQuestions[0]?.timeLimit || 30);
     
@@ -143,7 +146,7 @@ function App() {
 
   // 提交答案
   const submitAnswer = useCallback(() => {
-    if (selectedOption === null) return;
+    if (selectedOption === null && !showAnswer) return;
 
     const currentQuestion = questions[currentQuestionIndex];
     const isCorrect = selectedOption === currentQuestion?.correctAnswer;
@@ -169,7 +172,7 @@ function App() {
     } else {
       finishQuiz();
     }
-  }, [currentQuestionIndex, questions, score, selectedOption, userAnswers, moveToNextQuestion, finishQuiz]);
+  }, [currentQuestionIndex, questions, score, selectedOption, userAnswers, moveToNextQuestion, finishQuiz, showAnswer]);
 
   // 切换静音状态
   const toggleMute = () => {
@@ -178,6 +181,11 @@ function App() {
     if (bgmPlayerRef.current) {
       bgmPlayerRef.current.setMuted(newMutedState);
     }
+  };
+
+  // 切换答案显示状态
+  const toggleShowAnswer = () => {
+    setShowAnswer(!showAnswer);
   };
 
   // 格式化时间显示
@@ -271,25 +279,58 @@ function App() {
                 <div className="score-display">得分: {score}/{questions.length}</div>
               </div>
               <h2>{questions[currentQuestionIndex]?.text || "加载题目中..."}</h2>
+              
+              {/* 显示答案区域 */}
+              {showAnswer && (
+                <div className="answer-section">
+                  <div className="correct-answer">
+                    正确答案: {String.fromCharCode(65 + questions[currentQuestionIndex]?.correctAnswer)}.
+                    {questions[currentQuestionIndex]?.options[questions[currentQuestionIndex]?.correctAnswer]}
+                  </div>
+                  {questions[currentQuestionIndex]?.referenceLink && (
+                    <p>
+                      <a 
+                        href={questions[currentQuestionIndex]?.referenceLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="reference-link"
+                      >
+                        查看相关资料 →
+                      </a>
+                    </p>
+                  )}
+                </div>
+              )}
+              
               <div className="options">
                 {questions[currentQuestionIndex]?.options?.map((option, index) => (
                   <button
                     key={index}
                     className={`option-button ${selectedOption === index ? 'selected' : ''}`}
                     onClick={() => handleOptionSelect(index)}
-                    disabled={questionTimeLeft === 0}
+                    disabled={questionTimeLeft === 0 || showAnswer}
                   >
                     {String.fromCharCode(65 + index)}. {option}
                   </button>
                 )) || <div>题目加载中...</div>}
               </div>
-              <button 
-                onClick={submitAnswer} 
-                disabled={selectedOption === null || questionTimeLeft === 0}
-                className="submit-button"
-              >
-                {currentQuestionIndex < questions.length - 1 ? '下一题' : '提交答案'}
-              </button>
+              
+              <div className="question-actions">
+                <button 
+                  onClick={toggleShowAnswer}
+                  className="show-answer-button"
+                >
+                  {showAnswer ? '隐藏答案' : '查看答案'}
+                </button>
+                
+                <button 
+                  onClick={submitAnswer} 
+                  disabled={(selectedOption === null && !showAnswer) || questionTimeLeft === 0}
+                  className="submit-button"
+                >
+                  {currentQuestionIndex < questions.length - 1 ? '下一题' : '提交答案'}
+                </button>
+              </div>
             </div>
           </div>
         )}

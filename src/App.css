@@ -19,7 +19,7 @@
   margin: 0 auto;
 }
 
-.start-button, .submit-button, .restart-button, .mute-button {
+.start-button, .submit-button, .restart-button, .mute-button, .show-answer-button {
   background-color: #61dafb;
   border: none;
   color: #282c34;
@@ -37,8 +37,19 @@
   margin-top: 0;
 }
 
-.start-button:hover, .submit-button:hover, .restart-button:hover, .mute-button:hover {
+.show-answer-button {
+  background-color: #ffd700;
+  color: #282c34;
+  margin-top: 10px;
+  padding: 10px 20px;
+}
+
+.start-button:hover, .submit-button:hover, .restart-button:hover, .mute-button:hover, .show-answer-button:hover {
   background-color: #21a9c7;
+}
+
+.show-answer-button:hover {
+  background-color: #ffc400;
 }
 
 .start-button:disabled, .submit-button:disabled {
@@ -110,6 +121,13 @@
 .option-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.question-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .submit-button {
@@ -207,6 +225,21 @@
   color: #282c34;
 }
 
+/* 答案显示区域 */
+.answer-section {
+  background-color: #383c44;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.correct-answer {
+  font-weight: bold;
+  color: #4caf50;
+  margin-bottom: 10px;
+}
+
 @keyframes glow {
   from {
     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ffd700, 0 0 20px #ffd700;
@@ -232,5 +265,10 @@
   
   .bread-status {
     font-size: 20px;
+  }
+  
+  .question-actions {
+    flex-direction: column;
+    gap: 10px;
   }
 }
