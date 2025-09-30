@@ -18,6 +18,10 @@ const musicConfig = {
   bgmFiles: [
     // 示例文件，实际使用时需要添加真实音频文件
     "靠近一点点.m4a"
+    // 可以添加更多不同格式的音频文件
+    // "example.flac",
+    // "example.mp3",
+    // "example.wav"
   ],
   
   // 音效列表

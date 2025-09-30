@@ -102,7 +102,7 @@ function App() {
       if (gameStatus === 'in-progress' && musicConfig.autoPlay && bgmPlayerRef.current) {
         // 开始答题时随机播放BGM
         bgmPlayerRef.current.playRandomBgm();
-      } else if (bgmPlayerRef.current) {
+      } else if (gameStatus === 'finished' && bgmPlayerRef.current) {
         // 停止播放
         bgmPlayerRef.current.stop();
       }
@@ -127,6 +127,13 @@ function App() {
     setSelectedOption(null);
     // 设置第一题的倒计时
     setQuestionTimeLeft(selectedQuestions[0]?.timeLimit || 30);
+    
+    // 在用户交互后尝试播放音乐
+    if (bgmPlayerRef.current) {
+      setTimeout(() => {
+        bgmPlayerRef.current.playOnUserInteraction();
+      }, 200);
+    }
   }, [rawMarkdown]);
 
   // 选择答案
