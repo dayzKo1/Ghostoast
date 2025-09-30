@@ -315,6 +315,8 @@ function App() {
               <h3>答题回顾</h3>
               {questions.map((question, index) => {
                 const userAnswer = userAnswers.find(ans => ans.questionId === question.id);
+                const correctOptionIndex = question.correctAnswer;
+                const correctOptionText = question.options[correctOptionIndex];
                 return (
                   <div key={question.id} className="review-item">
                     <p><strong>问题 {index + 1}: {question.text}</strong></p>
@@ -324,6 +326,19 @@ function App() {
                     <p className={userAnswer?.isCorrect ? 'correct' : 'incorrect'}>
                       {userAnswer?.isCorrect ? '✓ 正确' : userAnswer?.selectedOption === null || userAnswer?.selectedOption === undefined ? '✗ 未作答' : '✗ 错误'}
                     </p>
+                    <p>正确答案: {String.fromCharCode(65 + correctOptionIndex)}. {correctOptionText}</p>
+                    {question.referenceLink && (
+                      <p>
+                        <a 
+                          href={question.referenceLink} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="reference-link"
+                        >
+                          查看相关资料 →
+                        </a>
+                      </p>
+                    )}
                   </div>
                 );
               })}

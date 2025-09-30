@@ -190,6 +190,23 @@
   animation: glow 1s ease-in-out infinite alternate;
 }
 
+.reference-link {
+  color: #61dafb;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: 1px solid #61dafb;
+  border-radius: 3px;
+  transition: all 0.3s;
+}
+
+.reference-link:hover {
+  background-color: #61dafb;
+  color: #282c34;
+}
+
 @keyframes glow {
   from {
     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ffd700, 0 0 20px #ffd700;

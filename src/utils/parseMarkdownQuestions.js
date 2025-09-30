@@ -33,6 +33,8 @@ export const parseMarkdownQuestions = (markdownContent) => {
         question.correctAnswerLetter = line.replace('- 正确答案:', '').trim();
       } else if (line.startsWith('- 时间限制:')) {
         question.timeLimit = parseInt(line.replace('- 时间限制:', '').trim()) || 30;
+      } else if (line.startsWith('- 跳转链接:')) {
+        question.referenceLink = line.replace('- 跳转链接:', '').trim();
       }
     });
     
