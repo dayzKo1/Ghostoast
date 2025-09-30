@@ -10,8 +10,7 @@ function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(300); // 5分钟总倒计时
-  const [questionTimeLeft, setQuestionTimeLeft] = useState(0); // 每题倒计时
+  const [questionTimeLeft, setQuestionTimeLeft] = useState(12); // 每题倒计时12秒
   const [gameStatus, setGameStatus] = useState('not-started'); // not-started, in-progress, finished
   const [userAnswers, setUserAnswers] = useState([]);
   const [rawMarkdown, setRawMarkdown] = useState('');
@@ -41,9 +40,8 @@ function App() {
     setCurrentQuestionIndex(currentQuestionIndex + 1);
     setSelectedOption(null);
     setShowAnswer(false); // 切换题目时隐藏答案
-    // 设置下一题的倒计时
-    const nextQuestion = questions[currentQuestionIndex + 1];
-    setQuestionTimeLeft(nextQuestion?.timeLimit || 30);
+    // 设置下一题的倒计时为12秒
+    setQuestionTimeLeft(12);
   }, [currentQuestionIndex, questions]);
 
   // 结束答题
@@ -74,16 +72,6 @@ function App() {
     }
   }, [questions, currentQuestionIndex, userAnswers, moveToNextQuestion, finishQuiz]);
 
-  // 总倒计时效果
-  useEffect(() => {
-    let timer;
-    if (gameStatus === 'in-progress' && timeLeft > 0) {
-      timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    } else if (gameStatus === 'in-progress' && timeLeft === 0) {
-      finishQuiz();
-    }
-    return () => clearTimeout(timer);
-  }, [timeLeft, gameStatus, finishQuiz]);
 
   // 每题倒计时效果
   useEffect(() => {
@@ -125,8 +113,8 @@ function App() {
     setUserAnswers([]);
     setSelectedOption(null);
     setShowAnswer(false); // 开始答题时隐藏答案
-    // 设置第一题的倒计时
-    setQuestionTimeLeft(selectedQuestions[0]?.timeLimit || 30);
+    // 设置第一题的倒计时为12秒
+    setQuestionTimeLeft(12);
     
     // 尝试播放音乐
     if (bgmPlayerRef.current) {
@@ -239,7 +227,7 @@ function App() {
               <div className="bread-description">每答对一道题，面包就离烤好更近一步！</div>
             </div>
             <p>题目数量: 随机抽取最多5题</p>
-            <p>总时间: 5 分钟</p>
+            <p>每题时间: 12 秒</p>
             <div className="audio-controls">
               <button onClick={toggleMute} className="mute-button">
                 {isMuted ? '🔇 点击取消静音' : '🔊 点击静音'}
@@ -254,11 +242,8 @@ function App() {
         {gameStatus === 'in-progress' && questions.length > 0 && (
           <div className="quiz-screen">
             <div className="quiz-header">
-              <div className="timer">
-                总剩余时间: {formatTime(timeLeft)}
-              </div>
               <div className="question-timer">
-                本题剩余: {formatTime(questionTimeLeft)}
+                剩余时间: {formatTime(questionTimeLeft)}
               </div>
               <div className="progress">
                 进度: {currentQuestionIndex + 1}/{questions.length}
