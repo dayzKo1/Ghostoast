@@ -28,50 +28,12 @@ function App() {
 
   // 初始化BGM播放器
   useEffect(() => {
-    let hasInteracted = false;
-    
     const initBgmPlayer = async () => {
-      try {
-        bgmPlayerRef.current = new BgmPlayer(musicConfig);
-        await bgmPlayerRef.current.init();
-        
-        // 如果之前已经有用户交互，尝试播放
-        if (hasInteracted) {
-          bgmPlayerRef.current.playOnUserInteraction();
-        }
-      } catch (error) {
-        console.warn('BGM player initialization failed:', error);
-      }
+      bgmPlayerRef.current = new BgmPlayer(musicConfig);
+      await bgmPlayerRef.current.init();
     };
 
-    // 添加全局的一次性用户交互监听
-    const handleUserInteraction = () => {
-      hasInteracted = true;
-      // 移除监听器，避免重复触发
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
-      document.removeEventListener('keydown', handleUserInteraction);
-      
-      // 如果BGM播放器已初始化，尝试播放
-      if (bgmPlayerRef.current) {
-        bgmPlayerRef.current.playOnUserInteraction();
-      }
-    };
-
-    // 监听用户交互事件
-    document.addEventListener('click', handleUserInteraction);
-    document.addEventListener('touchstart', handleUserInteraction);
-    document.addEventListener('keydown', handleUserInteraction);
-
-    // 初始化播放器
     initBgmPlayer();
-
-    // 清理事件监听器
-    return () => {
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
-      document.removeEventListener('keydown', handleUserInteraction);
-    };
   }, []);
 
   // 移动到下一题
@@ -211,15 +173,13 @@ function App() {
   }, [currentQuestionIndex, questions, score, selectedOption, userAnswers, moveToNextQuestion, finishQuiz, showAnswer]);
 
   // 切换静音状态
-  const toggleMute = useCallback(() => {
+  const toggleMute = () => {
     const newMutedState = !isMuted;
     setIsMuted(newMutedState);
     if (bgmPlayerRef.current) {
-      bgmPlayerRef.current.setMuted(newMutedState).catch(error => {
-        console.warn('Failed to set mute state:', error);
-      });
+      bgmPlayerRef.current.setMuted(newMutedState);
     }
-  }, [isMuted]);
+  };
 
   // 切换答案显示状态
   const toggleShowAnswer = () => {

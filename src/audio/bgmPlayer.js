@@ -26,12 +26,12 @@ class BgmPlayer {
    */
   playRandomBgm() {
     if (!this.config.autoPlay || this.bgmFiles.length === 0) {
-      return;
+      return Promise.resolve(); // 返回resolved的Promise
     }
 
     // 随机选择一个BGM文件
     const randomIndex = Math.floor(Math.random() * this.bgmFiles.length);
-    this.playBgm(randomIndex);
+    return this.playBgm(randomIndex); // 返回playBgm的Promise
   }
 
   /**
@@ -39,76 +39,82 @@ class BgmPlayer {
    * @param {number} index - BGM文件索引
    */
   playBgm(index) {
-    if (this.bgmFiles.length === 0 || index >= this.bgmFiles.length) {
-      return;
-    }
+    return new Promise((resolve, reject) => {
+      if (this.bgmFiles.length === 0 || index >= this.bgmFiles.length) {
+        return resolve(); // 无文件可播放时resolve
+      }
 
-    // 停止当前播放的音乐
-    this.stop();
+      // 停止当前播放的音乐
+      this.stop();
 
-    // 创建新的音频对象
-    this.currentBgmIndex = index;
-    const fileName = this.bgmFiles[index];
-    const bgmPath = `${this.config.bgmFolder}${fileName}`;
-    
-    this.audio = new Audio();
-    this.audio.volume = this.config.defaultVolume;
-    this.audio.loop = false; // BGM通常不循环，播放完切换下一首
-    this.audio.muted = this.isMuted;
-    
-    // 添加多种格式支持
-    const supportedFormats = [
-      { type: 'audio/m4a', ext: '.m4a' },
-      { type: 'audio/flac', ext: '.flac' },
-      { type: 'audio/mp4', ext: '.m4a' },
-      { type: 'audio/mpeg', ext: '.mp3' },
-      { type: 'audio/wav', ext: '.wav' },
-      { type: 'audio/ogg', ext: '.ogg' }
-    ];
-    
-    // 检查文件扩展名并设置正确的类型
-    const fileExt = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
-    
-    // 如果是M4A文件，特殊处理
-    if (fileExt === '.m4a') {
-      // 创建source元素以更好地支持M4A
-      const source = document.createElement('source');
-      source.src = bgmPath;
-      source.type = 'audio/mp4'; // M4A通常使用audio/mp4 MIME类型
-      this.audio.appendChild(source);
-    } else if (fileExt === '.flac') {
-      // 如果是FLAC文件
-      const source = document.createElement('source');
-      source.src = bgmPath;
-      source.type = 'audio/flac';
-      this.audio.appendChild(source);
-    } else if (fileExt === '.mp3') {
-      // 如果是MP3文件
-      const source = document.createElement('source');
-      source.src = bgmPath;
-      source.type = 'audio/mpeg';
-      this.audio.appendChild(source);
-    } else {
-      // 其他格式直接设置src
-      this.audio.src = bgmPath;
-    }
+      // 创建新的音频对象
+      this.currentBgmIndex = index;
+      const fileName = this.bgmFiles[index];
+      const bgmPath = `${this.config.bgmFolder}${fileName}`;
+      
+      this.audio = new Audio();
+      this.audio.volume = this.config.defaultVolume;
+      this.audio.loop = false; // BGM通常不循环，播放完切换下一首
+      this.audio.muted = this.isMuted;
+      
+      // 检查文件扩展名并设置正确的类型
+      const fileExt = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+      
+      // 如果是M4A文件，特殊处理
+      if (fileExt === '.m4a') {
+        // 创建source元素以更好地支持M4A
+        const source = document.createElement('source');
+        source.src = bgmPath;
+        source.type = 'audio/mp4'; // M4A通常使用audio/mp4 MIME类型
+        this.audio.appendChild(source);
+      } else if (fileExt === '.flac') {
+        // 如果是FLAC文件
+        const source = document.createElement('source');
+        source.src = bgmPath;
+        source.type = 'audio/flac';
+        this.audio.appendChild(source);
+      } else if (fileExt === '.mp3') {
+        // 如果是MP3文件
+        const source = document.createElement('source');
+        source.src = bgmPath;
+        source.type = 'audio/mpeg';
+        this.audio.appendChild(source);
+      } else {
+        // 其他格式直接设置src
+        this.audio.src = bgmPath;
+      }
 
-    // 当前音乐播放完毕后播放下一首
-    this.audio.addEventListener('ended', () => {
-      this.playNext();
-    });
-
-    // 播放音乐
-    const playPromise = this.audio.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(e => {
-        console.log("音频播放被阻止:", e);
-        // 可能是自动播放策略阻止，尝试用户交互后播放
-        if (e.name === 'NotAllowedError') {
-          console.log("自动播放被浏览器阻止，需要用户交互");
-        }
+      // 当前音乐播放完毕后播放下一首
+      this.audio.addEventListener('ended', () => {
+        this.playNext();
       });
-    }
+
+      // 音频可以播放时resolve
+      this.audio.addEventListener('canplay', () => {
+        resolve();
+      }, { once: true });
+
+      // 音频播放错误时reject
+      this.audio.addEventListener('error', (e) => {
+        reject(new Error(`Failed to load audio: ${e.message}`));
+      }, { once: true });
+
+      // 播放音乐
+      const playPromise = this.audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(e => {
+          console.log("音频播放被阻止:", e);
+          // 可能是自动播放策略阻止，尝试用户交互后播放
+          if (e.name === 'NotAllowedError') {
+            console.log("自动播放被浏览器阻止，需要用户交互");
+          }
+          // 即使播放失败也resolve，因为我们已经处理了错误
+          resolve();
+        });
+      } else {
+        resolve();
+      }
+    });
   }
 
   /**
@@ -116,16 +122,16 @@ class BgmPlayer {
    */
   playNext() {
     if (this.bgmFiles.length === 0) {
-      return;
+      return Promise.resolve();
     }
 
     if (this.config.randomBgm) {
       // 随机播放模式
-      this.playRandomBgm();
+      return this.playRandomBgm();
     } else {
       // 顺序播放模式
       const nextIndex = (this.currentBgmIndex + 1) % this.bgmFiles.length;
-      this.playBgm(nextIndex);
+      return this.playBgm(nextIndex);
     }
   }
 
@@ -168,14 +174,16 @@ class BgmPlayer {
       // 如果已经有音频对象，先尝试播放
       const playPromise = this.audio.play();
       if (playPromise !== undefined) {
-        playPromise.catch(e => {
+        return playPromise.catch(e => {
           console.log("用户交互后播放仍被阻止:", e);
         });
       }
+      return Promise.resolve();
     } else if (this.bgmFiles.length > 0) {
       // 如果还没有音频对象，创建并播放第一个文件
-      this.playRandomBgm();
+      return this.playRandomBgm();
     }
+    return Promise.resolve();
   }
 }
 
