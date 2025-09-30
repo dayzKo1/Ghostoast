@@ -187,13 +187,51 @@ function App() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // 获取面包烘烤进度显示
+  const getBreadProgress = () => {
+    if (questions.length === 0) return 0;
+    const progress = Math.round((score / questions.length) * 4); // 0-4的进度
+    return Math.min(progress, 4);
+  };
+
+  // 面包烘烤状态描述
+  const getBreadDescription = () => {
+    const progress = getBreadProgress();
+    switch (progress) {
+      case 0: return "未烤的面包";
+      case 1: return "微烤的面包";
+      case 2: return "半熟的面包";
+      case 3: return "快熟的面包";
+      case 4: return "全熟的面包";
+      default: return "未烤的面包";
+    }
+  };
+
+  // 面包表情符号
+  const getBreadEmoji = () => {
+    const progress = getBreadProgress();
+    switch (progress) {
+      case 0: return "🍞";
+      case 1: return "🍞";
+      case 2: return "🍞";
+      case 3: return "🍞";
+      case 4: return "🍞";
+      default: return "🍞";
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <h1>答题系统</h1>
+        <h1>答题烘烤坊</h1>
         {gameStatus === 'not-started' && (
           <div className="start-screen">
-            <h2>欢迎来到答题系统</h2>
+            <h2>欢迎来到答题烘烤坊！</h2>
+            <div className="bread-area">
+              <div className="bread-emoji">{getBreadEmoji()}</div>
+              <div className="bread-status">未烤的面包</div>
+              <div className="bread-description">每答对一道题，面包就离烤好更近一步！</div>
+            </div>
             <p>题目数量: 随机抽取最多5题</p>
             <p>总时间: 5 分钟</p>
             <div className="audio-controls">
@@ -202,7 +240,7 @@ function App() {
               </button>
             </div>
             <button onClick={startQuiz} className="start-button">
-              开始答题
+              开始烘烤面包
             </button>
           </div>
         )}
@@ -227,6 +265,11 @@ function App() {
             </div>
 
             <div className="question-section">
+              <div className="bread-progress">
+                <div className="bread-emoji">{getBreadEmoji()}</div>
+                <div className="bread-status">{getBreadDescription()}</div>
+                <div className="score-display">得分: {score}/{questions.length}</div>
+              </div>
               <h2>{questions[currentQuestionIndex].text}</h2>
               <div className="options">
                 {questions[currentQuestionIndex].options.map((option, index) => (
@@ -253,7 +296,20 @@ function App() {
 
         {gameStatus === 'finished' && (
           <div className="result-screen">
-            <h2>答题完成!</h2>
+            <h2>烘烤完成!</h2>
+            <div className="bread-result">
+              <div className="bread-emoji">{getBreadEmoji()}</div>
+              <div className="bread-status">{getBreadDescription()}</div>
+              {getBreadProgress() === 4 ? (
+                <div className="perfect-bread">🎉 恭喜！你获得了一个完美的全熟面包！ 🎉</div>
+              ) : (
+                <div className="bread-message">
+                  {score > 0 
+                    ? `不错哦！答对了${score}题，继续努力可以获得完美面包！` 
+                    : "还需要多加练习哦，再来一次吧！"}
+                </div>
+              )}
+            </div>
             <p className="score">你的得分: {score}/{questions.length}</p>
             <div className="answers-review">
               <h3>答题回顾</h3>
@@ -278,7 +334,7 @@ function App() {
               </button>
             </div>
             <button onClick={startQuiz} className="restart-button">
-              重新开始
+              重新烘烤
             </button>
           </div>
         )}

@@ -148,6 +148,57 @@
   margin-top: 30px;
 }
 
+/* 面包烘烤相关样式 */
+.bread-area, .bread-progress, .bread-result {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #383c44;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.bread-emoji {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.bread-status {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #ffd700;
+}
+
+.bread-description, .bread-message {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.score-display {
+  font-size: 18px;
+  font-weight: bold;
+  color: #61dafb;
+  margin-top: 10px;
+}
+
+.perfect-bread {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffd700;
+  margin: 20px 0;
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ffd700, 0 0 20px #ffd700;
+  }
+  to {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ffd700, 0 0 40px #ffd700;
+  }
+}
+
 @media (max-width: 600px) {
   .quiz-header {
     flex-direction: column;
@@ -156,5 +207,13 @@
   
   .timer, .question-timer, .progress, .audio-controls {
     margin: 10px 0;
+  }
+  
+  .bread-emoji {
+    font-size: 36px;
+  }
+  
+  .bread-status {
+    font-size: 20px;
   }
 }
