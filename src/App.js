@@ -10,7 +10,7 @@ function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [score, setScore] = useState(0);
-  const [questionTimeLeft, setQuestionTimeLeft] = useState(12); // 每题倒计时12秒
+  const [questionTimeLeft, setQuestionTimeLeft] = useState(12.00); // 每题倒计时12秒，精确到小数点后两位
   const [gameStatus, setGameStatus] = useState('not-started'); // not-started, in-progress, finished
   const [userAnswers, setUserAnswers] = useState([]);
   const [rawMarkdown, setRawMarkdown] = useState('');
@@ -41,8 +41,7 @@ function App() {
     setSelectedOption(null);
     setShowAnswer(false); // 切换题目时隐藏答案
     // 设置下一题的倒计时
-    const nextQuestion = questions[currentQuestionIndex + 1];
-    setQuestionTimeLeft(12); // 每题固定12秒
+    setQuestionTimeLeft(12.00); // 每题固定12秒
   }, [currentQuestionIndex, questions]);
 
   // 结束答题
@@ -73,12 +72,12 @@ function App() {
     }
   }, [questions, currentQuestionIndex, userAnswers, moveToNextQuestion, finishQuiz]);
 
-  // 每题倒计时效果
+  // 每题倒计时效果（100ms精度）
   useEffect(() => {
     let questionTimer;
     if (gameStatus === 'in-progress' && questionTimeLeft > 0) {
-      questionTimer = setTimeout(() => setQuestionTimeLeft(questionTimeLeft - 1), 1000);
-    } else if (gameStatus === 'in-progress' && questionTimeLeft === 0 && questions.length > 0) {
+      questionTimer = setTimeout(() => setQuestionTimeLeft(parseFloat((questionTimeLeft - 0.1).toFixed(2))), 100);
+    } else if (gameStatus === 'in-progress' && questionTimeLeft <= 0 && questions.length > 0) {
       // 时间到了自动跳转到下一题
       handleTimeUp();
     }
@@ -113,7 +112,7 @@ function App() {
     setSelectedOption(null);
     setShowAnswer(false); // 开始答题时隐藏答案
     // 设置第一题的倒计时为12秒
-    setQuestionTimeLeft(12);
+    setQuestionTimeLeft(12.00);
     
     // 尝试播放音乐
     if (bgmPlayerRef.current) {
@@ -173,11 +172,9 @@ function App() {
     setShowAnswer(!showAnswer);
   };
 
-  // 格式化时间显示
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  // 格式化时间显示（保留两位小数）
+  const formatTime = (time) => {
+    return time.toFixed(2);
   };
 
   // 获取面包烘烤进度显示
@@ -226,7 +223,7 @@ function App() {
               <div className="bread-description">每答对一道题，面包就离烤好更近一步！</div>
             </div>
             <p>题目数量: 随机抽取最多5题</p>
-            <p>每题时间: 12 秒</p>
+            <p>每题时间: 12.00 秒</p>
             <div className="audio-controls">
               <button onClick={toggleMute} className="mute-button">
                 {isMuted ? '🔇 点击取消静音' : '🔊 点击静音'}
@@ -242,7 +239,7 @@ function App() {
           <div className="quiz-screen">
             <div className="quiz-header">
               <div className="question-timer">
-                剩余时间: {formatTime(questionTimeLeft)}
+                剩余时间: {formatTime(questionTimeLeft)} 秒
               </div>
               <div className="progress">
                 进度: {currentQuestionIndex + 1}/{questions.length}
@@ -290,7 +287,7 @@ function App() {
                     key={index}
                     className={`option-button ${selectedOption === index ? 'selected' : ''}`}
                     onClick={() => handleOptionSelect(index)}
-                    disabled={questionTimeLeft === 0 || showAnswer}
+                    disabled={questionTimeLeft <= 0 || showAnswer}
                   >
                     {String.fromCharCode(65 + index)}. {option}
                   </button>
@@ -307,7 +304,7 @@ function App() {
                 
                 <button 
                   onClick={submitAnswer} 
-                  disabled={(selectedOption === null && !showAnswer) || questionTimeLeft === 0}
+                  disabled={(selectedOption === null && !showAnswer) || questionTimeLeft <= 0}
                   className="submit-button"
                 >
                   {currentQuestionIndex < questions.length - 1 ? '下一题' : '提交答案'}
