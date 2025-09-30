@@ -40,8 +40,9 @@ function App() {
     setCurrentQuestionIndex(currentQuestionIndex + 1);
     setSelectedOption(null);
     setShowAnswer(false); // 切换题目时隐藏答案
-    // 设置下一题的倒计时为12秒
-    setQuestionTimeLeft(12);
+    // 设置下一题的倒计时
+    const nextQuestion = questions[currentQuestionIndex + 1];
+    setQuestionTimeLeft(12); // 每题固定12秒
   }, [currentQuestionIndex, questions]);
 
   // 结束答题
@@ -71,7 +72,6 @@ function App() {
       finishQuiz();
     }
   }, [questions, currentQuestionIndex, userAnswers, moveToNextQuestion, finishQuiz]);
-
 
   // 每题倒计时效果
   useEffect(() => {
@@ -107,7 +107,6 @@ function App() {
     
     setQuestions(selectedQuestions);
     setGameStatus('in-progress');
-    setTimeLeft(300); // 5分钟总时间
     setCurrentQuestionIndex(0);
     setScore(0);
     setUserAnswers([]);
