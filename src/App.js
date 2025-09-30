@@ -41,7 +41,7 @@ function App() {
     setSelectedOption(null);
     // 设置下一题的倒计时
     const nextQuestion = questions[currentQuestionIndex + 1];
-    setQuestionTimeLeft(nextQuestion.timeLimit || 30);
+    setQuestionTimeLeft(nextQuestion?.timeLimit || 30);
   }, [currentQuestionIndex, questions]);
 
   // 结束答题
@@ -56,7 +56,7 @@ function App() {
     const newUserAnswers = [
       ...userAnswers,
       {
-        questionId: currentQuestion.id,
+        questionId: currentQuestion?.id,
         selectedOption: null,
         isCorrect: false
       }
@@ -146,12 +146,12 @@ function App() {
     if (selectedOption === null) return;
 
     const currentQuestion = questions[currentQuestionIndex];
-    const isCorrect = selectedOption === currentQuestion.correctAnswer;
+    const isCorrect = selectedOption === currentQuestion?.correctAnswer;
     
     const newUserAnswers = [
       ...userAnswers,
       {
-        questionId: currentQuestion.id,
+        questionId: currentQuestion?.id,
         selectedOption: selectedOption,
         isCorrect: isCorrect
       }
@@ -270,9 +270,9 @@ function App() {
                 <div className="bread-status">{getBreadDescription()}</div>
                 <div className="score-display">得分: {score}/{questions.length}</div>
               </div>
-              <h2>{questions[currentQuestionIndex].text}</h2>
+              <h2>{questions[currentQuestionIndex]?.text || "加载题目中..."}</h2>
               <div className="options">
-                {questions[currentQuestionIndex].options.map((option, index) => (
+                {questions[currentQuestionIndex]?.options?.map((option, index) => (
                   <button
                     key={index}
                     className={`option-button ${selectedOption === index ? 'selected' : ''}`}
@@ -281,7 +281,7 @@ function App() {
                   >
                     {String.fromCharCode(65 + index)}. {option}
                   </button>
-                ))}
+                )) || <div>题目加载中...</div>}
               </div>
               <button 
                 onClick={submitAnswer} 
