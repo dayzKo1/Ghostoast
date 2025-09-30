@@ -8,6 +8,7 @@
 - 选项D: 北美洲
 - 正确答案: B
 - 时间限制: 30
+- 跳转链接: https://zh.wikipedia.org/wiki/亚洲
 
 ## 题目2
 - 问题: React是由哪家公司开发的？
@@ -17,6 +18,7 @@
 - 选项D: Amazon
 - 正确答案: B
 - 时间限制: 30
+- 跳转链接: https://zh.wikipedia.org/wiki/React
 
 ## 题目3
 - 问题: JavaScript是一门编译型语言还是解释型语言？
@@ -26,6 +28,7 @@
 - 选项D: 以上都不是
 - 正确答案: B
 - 时间限制: 30
+- 跳转链接: https://zh.wikipedia.org/wiki/JavaScript
 
 ## 题目4
 - 问题: CSS的全称是什么？
@@ -35,6 +38,7 @@
 - 选项D: Colorful Style Sheets
 - 正确答案: C
 - 时间限制: 30
+- 跳转链接: https://zh.wikipedia.org/wiki/层叠样式表
 
 ## 题目5
 - 问题: HTML的全称是什么？
@@ -44,30 +48,34 @@
 - 选项D: Hyper Text Makeup Language
 - 正确答案: A
 - 时间限制: 30
+- 跳转链接: https://zh.wikipedia.org/wiki/HTML
 
 ## 题目6
 - 问题: 以下哪个不是编程语言？
 - 选项A: Python
 - 选项B: Java
-- 选项C: MySQL
+- 选项C: CSS
 - 选项D: C++
 - 正确答案: C
 - 时间限制: 30
+- 跳转链接: https://zh.wikipedia.org/wiki/CSS
 
 ## 题目7
-- 问题: HTTP的默认端口号是多少？
-- 选项A: 21
-- 选项B: 25
-- 选项C: 80
-- 选项D: 110
-- 正确答案: C
-- 时间限制: 30
-
-## 题目8
-- 问题: 以下哪个是前端框架？
-- 选项A: Django
-- 选项B: Express
-- 选项C: Spring
-- 选项D: Vue
+- 问题: 以下哪个是版本控制系统？
+- 选项A: GitHub
+- 选项B: Git
+- 选项C: SVN
+- 选项D: 以上都是
 - 正确答案: D
 - 时间限制: 30
+- 跳转链接: https://zh.wikipedia.org/wiki/Git
+
+## 题目8
+- 问题: HTTP状态码200表示什么？
+- 选项A: 服务器错误
+- 选项B: 页面未找到
+- 选项C: 请求成功
+- 选项D: 重定向
+- 正确答案: C
+- 时间限制: 30
+- 跳转链接: https://zh.wikipedia.org/wiki/HTTP状态码

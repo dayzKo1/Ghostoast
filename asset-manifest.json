@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/Ghostoast/static/css/main.f36c41b5.css",
-    "main.js": "/Ghostoast/static/js/main.a8a84bb6.js",
+    "main.css": "/Ghostoast/static/css/main.28edd922.css",
+    "main.js": "/Ghostoast/static/js/main.09d70183.js",
     "static/js/453.51fc4bae.chunk.js": "/Ghostoast/static/js/453.51fc4bae.chunk.js",
-    "static/media/questions.md": "/Ghostoast/static/media/questions.e368b37f7d3eb03f11d1.md",
+    "static/media/questions.md": "/Ghostoast/static/media/questions.fbf2ac5e86f75f5ebb67.md",
     "index.html": "/Ghostoast/index.html",
-    "main.f36c41b5.css.map": "/Ghostoast/static/css/main.f36c41b5.css.map",
-    "main.a8a84bb6.js.map": "/Ghostoast/static/js/main.a8a84bb6.js.map",
+    "main.28edd922.css.map": "/Ghostoast/static/css/main.28edd922.css.map",
+    "main.09d70183.js.map": "/Ghostoast/static/js/main.09d70183.js.map",
     "453.51fc4bae.chunk.js.map": "/Ghostoast/static/js/453.51fc4bae.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f36c41b5.css",
-    "static/js/main.a8a84bb6.js"
+    "static/css/main.28edd922.css",
+    "static/js/main.09d70183.js"
   ]
 }
