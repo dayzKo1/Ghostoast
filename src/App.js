@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import questionsData from './questions.json';
+import React, { useState, useEffect, useCallback } from 'react';
+import Markdown from 'markdown-to-jsx';
+import questionsData from './questions.md';
+import { parseMarkdownQuestions, getRandomQuestions } from './utils/parseMarkdownQuestions';
 import './App.css';
 
 function App() {
@@ -11,6 +13,14 @@ function App() {
   const [questionTimeLeft, setQuestionTimeLeft] = useState(0); // 每题倒计时
   const [gameStatus, setGameStatus] = useState('not-started'); // not-started, in-progress, finished
   const [userAnswers, setUserAnswers] = useState([]);
+  const [rawMarkdown, setRawMarkdown] = useState('');
+
+  // 获取Markdown内容
+  useEffect(() => {
+    fetch(questionsData)
+      .then(response => response.text())
+      .then(text => setRawMarkdown(text));
+  }, []);
 
   // 总倒计时效果
   useEffect(() => {
@@ -36,7 +46,7 @@ function App() {
   }, [questionTimeLeft, gameStatus, questions, currentQuestionIndex]);
 
   // 处理题目时间到的情况
-  const handleTimeUp = () => {
+  const handleTimeUp = useCallback(() => {
     // 记录未答题
     const currentQuestion = questions[currentQuestionIndex];
     const newUserAnswers = [
@@ -56,26 +66,24 @@ function App() {
     } else {
       finishQuiz();
     }
-  };
+  }, [questions, currentQuestionIndex, userAnswers]);
 
   // 移动到下一题
-  const moveToNextQuestion = () => {
+  const moveToNextQuestion = useCallback(() => {
     setCurrentQuestionIndex(currentQuestionIndex + 1);
     setSelectedOption(null);
     // 设置下一题的倒计时
     const nextQuestion = questions[currentQuestionIndex + 1];
     setQuestionTimeLeft(nextQuestion.timeLimit || 30);
-  };
-
-  // 随机选择题目
-  const selectRandomQuestions = (allQuestions, count) => {
-    const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
-  };
+  }, [currentQuestionIndex, questions]);
 
   // 开始答题
-  const startQuiz = () => {
-    const selectedQuestions = selectRandomQuestions(questionsData, Math.min(5, questionsData.length));
+  const startQuiz = useCallback(() => {
+    // 解析Markdown题库
+    const parsedQuestions = parseMarkdownQuestions(rawMarkdown);
+    // 随机抽取题目（最多5题）
+    const selectedQuestions = getRandomQuestions(parsedQuestions, Math.min(5, parsedQuestions.length));
+    
     setQuestions(selectedQuestions);
     setGameStatus('in-progress');
     setTimeLeft(300); // 5分钟总时间
@@ -84,8 +92,8 @@ function App() {
     setUserAnswers([]);
     setSelectedOption(null);
     // 设置第一题的倒计时
-    setQuestionTimeLeft(selectedQuestions[0].timeLimit || 30);
-  };
+    setQuestionTimeLeft(selectedQuestions[0]?.timeLimit || 30);
+  }, [rawMarkdown]);
 
   // 选择答案
   const handleOptionSelect = (optionIndex) => {
@@ -141,7 +149,7 @@ function App() {
         {gameStatus === 'not-started' && (
           <div className="start-screen">
             <h2>欢迎来到答题系统</h2>
-            <p>题目数量: {Math.min(5, questionsData.length)} 题</p>
+            <p>题目数量: 随机抽取最多5题</p>
             <p>总时间: 5 分钟</p>
             <button onClick={startQuiz} className="start-button">
               开始答题
@@ -173,7 +181,7 @@ function App() {
                     onClick={() => handleOptionSelect(index)}
                     disabled={questionTimeLeft === 0}
                   >
-                    {option}
+                    {String.fromCharCode(65 + index)}. {option}
                   </button>
                 ))}
               </div>
@@ -199,9 +207,11 @@ function App() {
                 return (
                   <div key={question.id} className="review-item">
                     <p><strong>问题 {index + 1}: {question.text}</strong></p>
-                    <p>你的答案: {userAnswer?.selectedOption !== null ? question.options[userAnswer?.selectedOption] : '未作答'}</p>
+                    <p>你的答案: {userAnswer?.selectedOption !== null && userAnswer?.selectedOption !== undefined ? 
+                      `${String.fromCharCode(65 + userAnswer.selectedOption)}. ${question.options[userAnswer.selectedOption]}` : 
+                      '未作答'}</p>
                     <p className={userAnswer?.isCorrect ? 'correct' : 'incorrect'}>
-                      {userAnswer?.isCorrect ? '✓ 正确' : userAnswer?.selectedOption === null ? '✗ 未作答' : '✗ 错误'}
+                      {userAnswer?.isCorrect ? '✓ 正确' : userAnswer?.selectedOption === null || userAnswer?.selectedOption === undefined ? '✗ 未作答' : '✗ 错误'}
                     </p>
                   </div>
                 );

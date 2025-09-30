@@ -11,6 +11,7 @@
 
 - **JSON题库配置**：题目存储在 [src/questions.json](src/questions.json) 文件中，可以轻松添加或修改题目
 - **倒计时功能**：默认设置为5分钟答题时间，在界面上方实时显示剩余时间
+- **每题倒计时**：每道题都有独立的倒计时，时间结束后自动跳转到下一题
 - **随机抽题**：每次开始答题时会从题库中随机选取题目
 - **答题回顾**：答题结束后可查看每道题的正确与否及自己的选择
 
@@ -37,6 +38,7 @@
 - `text`: 题目内容
 - `options`: 选项数组
 - `correctAnswer`: 正确答案索引（从0开始）
+- `timeLimit`: 每题的时间限制（秒）
 
 示例：
 ```json
@@ -49,9 +51,17 @@
     "C. 欧洲",
     "D. 北美洲"
   ],
-  "correctAnswer": 1
+  "correctAnswer": 1,
+  "timeLimit": 30
 }
 ```
+
+## 知识库管理
+
+[knowledge-base](knowledge-base) 文件夹用于存放题库的Excel文件，方便非技术人员维护题目。
+
+- [knowledge-base/README.md](knowledge-base/README.md) - 知识库使用说明
+- [knowledge-base/sample_questions.xlsx](knowledge-base/sample_questions.xlsx) - 示例题库Excel文件
 
 ## 技术栈
 
