@@ -19,7 +19,7 @@
   margin: 0 auto;
 }
 
-.start-button, .submit-button, .restart-button {
+.start-button, .submit-button, .restart-button, .mute-button {
   background-color: #61dafb;
   border: none;
   color: #282c34;
@@ -31,7 +31,13 @@
   transition: background-color 0.3s;
 }
 
-.start-button:hover, .submit-button:hover, .restart-button:hover {
+.mute-button.small {
+  padding: 5px 10px;
+  font-size: 16px;
+  margin-top: 0;
+}
+
+.start-button:hover, .submit-button:hover, .restart-button:hover, .mute-button:hover {
   background-color: #21a9c7;
 }
 
@@ -46,9 +52,10 @@
   margin-bottom: 30px;
   font-size: 18px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
-.timer, .question-timer, .progress {
+.timer, .question-timer, .progress, .audio-controls {
   margin: 5px;
 }
 
@@ -147,7 +154,7 @@
     align-items: center;
   }
   
-  .timer, .question-timer, .progress {
+  .timer, .question-timer, .progress, .audio-controls {
     margin: 10px 0;
   }
 }
