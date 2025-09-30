@@ -11,6 +11,17 @@ const musicConfig = {
     }
   ],
   
+  // BGM文件夹路径
+  bgmFolder: "./bgm/",
+  
+  // BGM文件列表（实际项目中可以动态加载文件夹中的文件）
+  bgmFiles: [
+    // 示例文件，实际使用时需要添加真实音频文件
+    // "bgm1.mp3",
+    // "bgm2.mp3",
+    // "bgm3.mp3"
+  ],
+  
   // 音效列表
   soundEffects: {
     start: null,     // 开始答题音效
@@ -22,6 +33,7 @@ const musicConfig = {
   // 默认设置
   defaultVolume: 0.5,
   autoPlay: true,   // 是否自动播放
+  randomBgm: true,  // 是否随机播放BGM
   allowMute: true   // 是否允许静音
 };
 

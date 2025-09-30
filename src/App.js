@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import questionsData from './questions.md';
 import { parseMarkdownQuestions, getRandomQuestions } from './utils/parseMarkdownQuestions';
 import musicConfig from './audio/musicConfig';
+import BgmPlayer from './audio/bgmPlayer';
 import './App.css';
 
 function App() {
@@ -15,7 +16,7 @@ function App() {
   const [userAnswers, setUserAnswers] = useState([]);
   const [rawMarkdown, setRawMarkdown] = useState('');
   const [isMuted, setIsMuted] = useState(false);
-  const audioRef = useRef(null);
+  const bgmPlayerRef = useRef(null);
 
   // 获取Markdown内容
   useEffect(() => {
@@ -24,21 +25,24 @@ function App() {
       .then(text => setRawMarkdown(text));
   }, []);
 
-  // 初始化音频（实际项目中可以在这里加载音频文件）
+  // 初始化BGM播放器
   useEffect(() => {
-    // 在实际项目中，这里可以创建Audio对象并加载音频文件
-    // audioRef.current = new Audio(backgroundMusicFile);
-    // audioRef.current.loop = musicConfig.backgroundMusic[0].loop;
-    // audioRef.current.volume = musicConfig.backgroundMusic[0].volume;
+    const initBgmPlayer = async () => {
+      bgmPlayerRef.current = new BgmPlayer(musicConfig);
+      await bgmPlayerRef.current.init();
+    };
+
+    initBgmPlayer();
   }, []);
 
-  // 控制音频播放/暂停
+  // 控制BGM播放
   useEffect(() => {
-    if (gameStatus === 'in-progress' && musicConfig.autoPlay && audioRef.current) {
-      // 在实际项目中取消注释以下行以启用音频播放
-      // audioRef.current.play().catch(e => console.log("音频播放被阻止:", e));
-    } else if (audioRef.current) {
-      // audioRef.current.pause();
+    if (gameStatus === 'in-progress' && musicConfig.autoPlay && bgmPlayerRef.current) {
+      // 开始答题时随机播放BGM
+      bgmPlayerRef.current.playRandomBgm();
+    } else if (bgmPlayerRef.current) {
+      // 停止播放
+      bgmPlayerRef.current.stop();
     }
   }, [gameStatus]);
 
@@ -63,7 +67,7 @@ function App() {
       handleTimeUp();
     }
     return () => clearTimeout(questionTimer);
-  }, [questionTimeLeft, gameStatus, questions, currentQuestionIndex]);
+  }, [questionTimeLeft, gameStatus, questions, currentQuestionIndex, handleTimeUp]);
 
   // 处理题目时间到的情况
   const handleTimeUp = useCallback(() => {
@@ -121,7 +125,7 @@ function App() {
   };
 
   // 提交答案
-  const submitAnswer = () => {
+  const submitAnswer = useCallback(() => {
     if (selectedOption === null) return;
 
     const currentQuestion = questions[currentQuestionIndex];
@@ -148,18 +152,19 @@ function App() {
     } else {
       finishQuiz();
     }
-  };
+  }, [currentQuestionIndex, questions, score, selectedOption, userAnswers, moveToNextQuestion]);
 
   // 结束答题
-  const finishQuiz = () => {
+  const finishQuiz = useCallback(() => {
     setGameStatus('finished');
-  };
+  }, []);
 
   // 切换静音状态
   const toggleMute = () => {
-    setIsMuted(!isMuted);
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    if (bgmPlayerRef.current) {
+      bgmPlayerRef.current.setMuted(newMutedState);
     }
   };
 
